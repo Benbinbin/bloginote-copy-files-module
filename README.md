@@ -19,10 +19,45 @@ npm install --save-dev bloginote-copy-files-module
 
 2. Add `bloginote-copy-files-module` to the `modules` section of `nuxt.config.ts`
 
-```js
+```ts
 export default defineNuxtConfig({
   modules: [
     'bloginote-copy-files-module'
+  ]
+})
+```
+
+3. Setting some options for this Module
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    'bloginote-copy-files-module'
+  ],
+  // set the following (optional) properties for the module
+  bloginoteCopyFiles: {
+    // the array contain the folder to clean before copy the files
+    // the default value is empty array []
+    cleanFolders: ['public/article'];
+    // set the source folder to copy (it will copy all the files inside this folder to the destination folder)
+    // the default value is 'content'
+    sourceFolder: 'content';
+    // set the destination folder
+    // the default value is 'public'
+    destFolder: 'public';
+    // set the ignore types of file, they won't be copied
+    // the default value is ['.md', '.json', '.csv']
+    ignoreTypes: ['.md', '.json', '.csv'];
+  }
+})
+```
+
+or using the inline syntax
+
+```ts
+export default defineNuxtConfig({
+  modules: [
+    ['bloginote-copy-files-module', { cleanFolders: ['public/article'] }]
   ]
 })
 ```
