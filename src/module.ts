@@ -1,3 +1,4 @@
+// Refer to: https://github.com/nuxt/content/issues/106#issuecomment-1002820342
 import { defineNuxtModule } from '@nuxt/kit'
 
 import fs from 'node:fs'
