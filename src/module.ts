@@ -16,44 +16,43 @@ const cleanContentFiles = (folderPathArr: string[] = []) => {
 // then copy all other type of files except .md from "content" folder to public folder
 // so all the assets can link to inside the markdown file by relative path
 const copyContentFiles = (src: string, destFolderName: string, ignore: string[] = []) => {
-  const srcExisted = fs.existsSync(src)
-  if(!srcExisted) return
-
   // url isn't case-sensitive but folder name is case-sensitive
-  // change all the folders name to lowercase when copy them to public
+  // so we can change all the folders name to lowercase when copy them to public
+  // and then access all the resource through url with lower-case
   const dest = destFolderName.toLowerCase()
 
-  const destExisted = fs.existsSync(dest)
-  if(!destExisted) {
-    fs.mkdirSync(dest)
-  }
-
-
   // check the if the src is a directory
-  const stats = srcExisted && fs.statSync(src)
-  const isDirectory = stats ? stats.isDirectory() : false
+  const srcExisted = fs.existsSync(src) // fist ensure the item exist
+  if (srcExisted) {
+    const stats = fs.statSync(src)
+    const isDirectory = stats.isDirectory()
 
-  if (isDirectory) {
-  // if the src is a directory
-  // copy all the files inside this directory recursion to the destination folder
-    // if (!fs.existsSync(dest) || !fs.statSync(src).isDirectory()) {
-    //   fs.mkdirSync(dest)
-    // }
-    fs.readdirSync(src).forEach((childItemName: string) => {
-      copyContentFiles(
-        path.join(src, childItemName),
-        path.join(dest, childItemName),
-        ignore
-      )
-    })
-  } else {
-    // if the src is a file
-    // copy it to the dest
-    const fileName = path.basename(src) as string
-    const ext = path.extname(src) as string
-    if (!ignore.includes(ext)) {
-      // console.log(src)
-      fs.copyFileSync(src, path.join(dest, fileName))
+    if (isDirectory) {
+      // if the src is a directory
+      // copy all the files inside this directory recursion to the destination folder
+
+      if (!fs.existsSync(dest)) {
+        // if the dest don't contain the directory as the source path
+        // create this directory
+        fs.mkdirSync(dest)
+      }
+
+      fs.readdirSync(src).forEach((childItemName: string) => {
+        copyContentFiles(
+          path.join(src, childItemName),
+          path.join(dest, childItemName),
+          ignore
+        )
+      })
+    } else {
+      // if the src is a file
+      // copy it to the dest
+      // const fileName = path.basename(src) as string
+      const ext = path.extname(src) as string
+      if (!ignore.includes(ext)) {
+        // console.log(src)
+        fs.copyFileSync(src, dest)
+      }
     }
   }
 }
@@ -88,7 +87,13 @@ export default defineNuxtModule<ModuleOptions>({
       const sourceFolder = options.sourceFolder ? options.sourceFolder : 'content'
       const destFolder = options.destFolder ? options.destFolder : 'public'
       const ignoreTypes = options.ignoreTypes ? options.ignoreTypes : ['.md', '.json', '.csv']
-      copyContentFiles(sourceFolder, destFolder, ignoreTypes)
+
+      // first check the source folder existed or not
+      const srcExisted = fs.existsSync(sourceFolder)
+      if (srcExisted) {
+        copyContentFiles(sourceFolder, destFolder, ignoreTypes)
+      }
+
     })
   }
 })
