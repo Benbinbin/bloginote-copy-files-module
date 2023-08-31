@@ -1,6 +1,6 @@
 {
   "name": "bloginote-copy-files-module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "copy files to public folder for Nuxt 3 (extract the module from Bloginote which is a Nuxt Content 2 template)",
   "repository": "https://github.com/Benbinbin/bloginote-copy-files-module",
   "license": "MIT",
